@@ -19,7 +19,7 @@
 
     - name: Run Mailcow backup with required arguments
       command: >
-        {{ mailcow_script }} backup {{ backup_dir }} {{ backup_option }}
+        {{ mailcow_script }} backup {{ backup_option }} {{ backup_dir }} 
       register: backup_result
       failed_when: backup_result.rc != 0
 
