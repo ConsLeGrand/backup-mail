@@ -27,6 +27,8 @@
       failed_when: backup_result.rc != 0
 
     - name: Upload Mailcow backup to S3 (via s3cmd)
+      become: yes
+      become_user: mailcow
       command: >
         /home/mailcow/.local/bin/s3cmd sync {{ backup_dir }}/ {{ s3_bucket_path }}
       when: backup_result.rc == 0
