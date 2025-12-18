@@ -28,7 +28,7 @@
 
     - name: Upload Mailcow backup to S3 (via s3cmd)
       command: >
-        s3cmd sync {{ backup_dir }}/ {{ s3_bucket_path }}
+        /home/mailcow/.local/bin/s3cmd sync {{ backup_dir }}/ {{ s3_bucket_path }}
       when: backup_result.rc == 0
       register: s3_upload
       failed_when: s3_upload.rc != 0
