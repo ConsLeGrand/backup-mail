@@ -25,6 +25,15 @@
         stdin: "{{ backup_dir }}\n"
       register: backup_result
       failed_when: backup_result.rc != 0
+      
+    - name: Fix permissions on Mailcow backup for S3 upload
+      file:
+        path: "{{ backup_dir }}"
+        state: directory
+        recurse: yes
+        owner: mailcow
+        group: mailcow
+        mode: "u+rwX,g+rX,o+rX"
 
     - name: Upload Mailcow backup to S3 (via s3cmd)
       become: yes
