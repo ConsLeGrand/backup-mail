@@ -7,7 +7,7 @@
     backup_dir: "/opt/backup/mailcow"
     backup_option: "mysql"        # all | vmail | configs | mysql
     mailcow_script: "/opt/mailcow-dockerized/helper-scripts/backup_and_restore.sh"
-    s3_bucket_path: "s3://backup-mailcow-64501cbd-0472-4f8f-a6e4-c4a77502c46a/backup-{{ ansible_date_time.date }}"
+    s3_bucket_path: "s3://backup-mailcow-64501cbd-0472-4f8f-a6e4-c4a77502c46a/backup-{{ ansible_date_time.date }}/"
 
   tasks:
 
@@ -15,7 +15,7 @@
       file:
         path: "{{ backup_dir }}"
         state: directory
-        mode: '0750'
+        mode: '0777'
 
     - name: Run Mailcow backup with required arguments
       command: >
@@ -27,6 +27,8 @@
       failed_when: backup_result.rc != 0
 
     - name: Upload Mailcow backup to S3 (via s3cmd)
+      become: yes
+      become_user: mailcow
       command: >
         /home/mailcow/.local/bin/s3cmd sync {{ backup_dir }}/ {{ s3_bucket_path }}
       when: backup_result.rc == 0
