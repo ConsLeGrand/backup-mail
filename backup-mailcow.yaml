@@ -19,7 +19,10 @@
 
     - name: Run Mailcow backup with required arguments
       command: >
-        {{ mailcow_script }} backup {{ backup_option }} {{ backup_dir }} 
+        {{ mailcow_script }} backup {{ backup_option }} 
+      args:
+        chdir: "/opt/mailcow-dockerized"
+        stdin: "{{ backup_dir }}\n"
       register: backup_result
       failed_when: backup_result.rc != 0
 
