@@ -5,7 +5,7 @@
 
   vars:
     backup_dir: "/opt/backup/mailcow"
-    backup_option: "mysql"        # all | vmail | configs | mysql
+    backup_option: "all"        # all | vmail | configs | mysql
     mailcow_script: "/opt/mailcow-dockerized/helper-scripts/backup_and_restore.sh"
     s3_bucket_path: "s3://{{ s3_bucket_name }}/backup-{{ ansible_date_time.date }}/"
 
@@ -44,9 +44,9 @@
       register: s3_upload
       failed_when: s3_upload.rc != 0
 
-    #- name: Cleanup local backup after upload
-    #  file:
-    #    path: "{{ backup_dir }}"
-    #    state: absent
-    #  when: s3_upload.rc == 0
+    - name: Cleanup local backup after upload
+      file:
+        path: "{{ backup_dir }}"
+        state: absent
+      when: s3_upload.rc == 0
 
