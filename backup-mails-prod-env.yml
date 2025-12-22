@@ -1,0 +1,51 @@
+---
+- name: Backup Mailcow + upload S3
+  hosts: all
+  become: yes
+
+  vars:
+    backup_dir: "/home/base/backup/mailcow"
+    backup_option: "mysql"        # all | vmail | configs | mysql
+    mailcow_script: "/home/base/mailcow-dockerized/helper-scripts/backup_and_restore.sh"
+    s3_bucket_path: "s3://{{ s3_bucket_name }}/backup-{{ ansible_date_time.date }}/"
+
+  tasks:
+
+    - name: Ensure backup directory exists
+      file:
+        path: "{{ backup_dir }}"
+        state: directory
+        mode: '0777'
+
+    - name: Run Mailcow backup with required arguments
+      command: >
+        {{ mailcow_script }} backup {{ backup_option }} 
+      args:
+        chdir: "/home/base/mailcow-dockerized"
+        stdin: "{{ backup_dir }}\n"
+      register: backup_result
+      failed_when: backup_result.rc != 0
+      
+    - name: Fix permissions on Mailcow backup for S3 upload
+      file:
+        path: "{{ backup_dir }}"
+        state: directory
+        recurse: yes
+        owner: mailcow
+        group: mailcow
+        mode: "u+rwX,g+rX,o+rX"
+
+    - name: Upload Mailcow backup to S3 (via s3cmd)
+      become: yes
+      become_user: base
+      command: >
+        /home/base/.local/bin/s3cmd sync {{ backup_dir }}/ {{ s3_bucket_path }}
+      when: backup_result.rc == 0
+      register: s3_upload
+      failed_when: s3_upload.rc != 0
+
+    - name: Cleanup local backup after upload
+      file:
+        path: "{{ backup_dir }}"
+        state: absent
+      when: s3_upload.rc == 0
