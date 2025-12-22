@@ -5,7 +5,7 @@
 
   vars:
     backup_dir: "/opt/backup/mailcow"
-    backup_option: "mysql"        # all | vmail | configs | mysql
+    backup_option: "configs"        # all | vmail | configs | mysql
     mailcow_script: "/opt/mailcow-dockerized/helper-scripts/backup_and_restore.sh"
     s3_bucket_path: "s3://{{ s3_bucket_name }}/backup-{{ ansible_date_time.date }}/"
 
