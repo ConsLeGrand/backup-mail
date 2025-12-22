@@ -44,9 +44,9 @@
       register: s3_upload
       failed_when: s3_upload.rc != 0
 
-    - name: Cleanup local backup after upload
-      file:
-        path: "{{ backup_dir }}"
-        state: absent
-      when: s3_upload.rc == 0
+    #- name: Cleanup local backup after upload
+    #  file:
+    #    path: "{{ backup_dir }}"
+    #    state: absent
+    #  when: s3_upload.rc == 0
 
