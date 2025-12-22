@@ -7,7 +7,7 @@
     backup_dir: "/opt/backup/mailcow"
     backup_option: "all"        # all | vmail | configs | mysql
     mailcow_script: "/opt/mailcow-dockerized/helper-scripts/backup_and_restore.sh"
-    s3_bucket_path: "s3://backup-mailcow-64501cbd-0472-4f8f-a6e4-c4a77502c46a/backup-{{ ansible_date_time.date }}/"
+    s3_bucket_path: "s3://{{ s3_bucket_name }}/backup-{{ ansible_date_time.date }}/"
 
   tasks:
 
