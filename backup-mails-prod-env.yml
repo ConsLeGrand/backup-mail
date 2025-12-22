@@ -31,8 +31,8 @@
         path: "{{ backup_dir }}"
         state: directory
         recurse: yes
-        owner: mailcow
-        group: mailcow
+        owner: base
+        group: base
         mode: "u+rwX,g+rX,o+rX"
 
     - name: Upload Mailcow backup to S3 (via s3cmd)
