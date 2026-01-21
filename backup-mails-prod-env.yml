@@ -39,7 +39,7 @@
       become: yes
       become_user: base
       command: >
-        /usr/bin/s3cmd sync {{ backup_dir }}/ {{ s3_bucket_path }}
+        /usr/bin/s3cmd sync  --multipart-chunk-size-mb=256 {{ backup_dir }}/ {{ s3_bucket_path }}
       when: backup_result.rc == 0
       register: s3_upload
       failed_when: s3_upload.rc != 0
