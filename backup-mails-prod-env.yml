@@ -43,9 +43,14 @@
       when: backup_result.rc == 0
       register: s3_upload
       failed_when: s3_upload.rc != 0
+      
+    - name: Prune old backups (keep last 4)
+      shell: |
+        s3cmd ls {{ s3_bucket_path }} | awk '{print $2}' | grep backup- | sort | head -n -4 | xargs -r -I {} s3cmd del --recursive {}
 
     - name: Cleanup local backup after upload
       file:
         path: "{{ backup_dir }}"
         state: absent
       when: s3_upload.rc == 0
+      
