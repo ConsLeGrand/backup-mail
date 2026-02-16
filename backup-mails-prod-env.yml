@@ -46,7 +46,7 @@
       
     - name: Prune old backups (keep last 4)
       shell: |
-        s3cmd ls {{ s3_bucket_path }} | awk '{print $2}' | grep backup- | sort | head -n -4 | xargs -r -I {} s3cmd del --recursive {}
+        s3cmd ls {{ s3_bucket }} | awk '{print $2}' | grep backup- | sort | head -n -4 | xargs -r -I {} s3cmd del --recursive {}
 
     - name: Cleanup local backup after upload
       file:
